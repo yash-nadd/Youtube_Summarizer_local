@@ -1,0 +1,9 @@
+tensorflow
+fpdf
+PyYAML
+streamlit
+streamlit_navigation_bar
+transformers
+youtube_transcript_api
+
+
