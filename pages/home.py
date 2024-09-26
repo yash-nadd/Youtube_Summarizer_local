@@ -48,7 +48,6 @@ def show():
 
             .main {
                 background-color: #1e1e1e;
-                color: white;
                 padding-top: 60px;
             }
 
@@ -70,7 +69,6 @@ def show():
             .input-box::placeholder {
                 color: grey;
             }
-
 
             .centered-title {
                 text-align: center;
@@ -111,9 +109,13 @@ def show():
                 color: black;
             }
 
-            body, h1, h2, h3, h4, p, div, span {
+            body, h1, h2, h3, h4,span,div{
                 color: white;
             }
+           
+            .faq-answer {
+            color: white; /* Set answer text color to white */
+        }
         </style>
         """, unsafe_allow_html=True
     )
@@ -145,11 +147,8 @@ def show():
     with col2:
         summary_length = st.number_input("Length", min_value=10, max_value=200, value=100, step=10)
 
-    # Centering the button here
-    
     submit_button = st.button("Submit", key="submit_button", help="Generate Summary")
    
-
     if submit_button and video_url:
         with open('texts/video_id.txt', 'w') as file:
             file.write(video_url)
@@ -224,11 +223,21 @@ def show():
         """
         <div class="faq-section">
             <h3>FREQUENTLY ASKED QUESTIONS</h3>
-            <p>Q: Can I summarize any video?<br>A: Yes, as long as it's public.</p>
-            <p>Q: How long does it take?<br>A: Just a few seconds depending on the video length.</p>
+            """, unsafe_allow_html=True)
+
+    # Adding FAQ expanders
+    faqs = [
+    ("Can I summarize any video?", "Yes, as long as it's public."),
+    ("How long does it take?", "Just a few seconds depending on the video length."),
+]
+
+    for question, answer in faqs:
+        with st.expander(question, expanded=False):  # Collapsible FAQ entry
+             st.markdown(f'<div style="color: white;">{answer}</div>', unsafe_allow_html=True)
+    st.markdown(
+        """
         </div>
-        """,
-        unsafe_allow_html=True
+        """, unsafe_allow_html=True
     )
 
     st.markdown(

@@ -2,11 +2,21 @@ import streamlit as st
 import os
 import base64
 from fpdf import FPDF
-
 def show():
     
-    st.write("# Tools Section")
-    st.write("This section can contain links or information about tools related to the YouTube Summarizer.")
+    st.markdown(
+        """
+        <div class="main-header" style="text-align: center;">
+            <h1 style="margin-bottom: 0; line-height: 1.2;">
+                <span style="color: #ffffff;">Understanding</span>, 
+                <span style="color: #9D4FDB;"><i>Tools.</i></span>
+            </h1>
+
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
 
     if os.path.exists('texts/summary.txt'):
         with open('texts/summary.txt', 'r') as file:
@@ -33,6 +43,21 @@ def show():
                 )
     else:
         st.write("No summary available for PDF conversion.")
+
+    # Add the collapsible FAQ entries
+    st.markdown("<h3>FREQUENTLY ASKED QUESTIONS</h3>", unsafe_allow_html=True)
+
+    faqs = [
+        ("Can I summarize any video?", "Yes, as long as it's public."),
+        ("How long does it take?", "Just a few seconds to get the summary."),
+        ("Can I save the summary?", "Yes, download it as a PDF.")
+    ]
+
+    for question, answer in faqs:
+        with st.expander(question, expanded=False):  # Collapsible FAQ entry
+            st.markdown(f'<div style="color: white;">{answer}</div>', unsafe_allow_html=True)
+
+
     st.markdown(
         """
         <style>
@@ -44,6 +69,9 @@ def show():
                 margin: 0; /* Remove default body margin */
                 padding: 0; /* Remove default body padding */
             }
+            h3 {
+            color: white; /* Set all text to white by default */
+           }
 
             .navbar {
                 display: flex;
@@ -77,7 +105,6 @@ def show():
 
             .main {
                 background-color: #1e1e1e;
-                color: white;
                 padding-top: 60px; /* Add padding to prevent content from being hidden behind the navbar */
             }
             /* Styling for the navigation bar */
@@ -153,11 +180,10 @@ def show():
         }
         .main {
             background-color: #1e1e1e;  /* Dark black shade */
-            color: white;  /* Ensure main content text color is white */
         }
 
         /* Ensuring that all text elements default to white on the dark background */
-        body, h1, h2, h3, h4, p, div, span {
+        body, h1, h2, h3, h4, span {
             color: white; /* Set all text to white by default */
         }
         
@@ -167,18 +193,7 @@ def show():
         </style>
         """, unsafe_allow_html=True
     )
- 
-    st.markdown(
-    """
-    <div class="faq-section">
-        <h3>FREQUENTLY ASKED QUESTIONS</h3>
-        <p>Q: Can I summarize any video?<br>A: Yes, as long as it's public.</p>
-        <p>Q: How long does it take?<br>A: Just a few seconds to get the summary.</p>
-        <p>Q: Can I save the summary?<br>A: Yes, download it as a PDF.</p>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
+
     st.markdown(
     """
     <div class="footer">
@@ -213,3 +228,4 @@ def create_pdf(summary):
     
     # Save the PDF
     pdf.output("summary.pdf")
+

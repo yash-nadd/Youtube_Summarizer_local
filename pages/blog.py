@@ -82,7 +82,7 @@ def show():
                 color: black; /* Adjust for contrast against light background */
             }
             .faq-section {
-                background-color: #1a1a1a;
+                background-color: #1e1e1e; /* Darker background for FAQ section */
                 padding: 30px;
                 border-radius: 20px;
                 margin-top: 50px;
@@ -95,24 +95,46 @@ def show():
             h1 {
                 color: #9D4FDB; /* Change the color of h1 headings */
             }
+            h3, span {
+            color: white; /* Set all text to white by default */
+        }
         </style>
         """, unsafe_allow_html=True
     )
-
-    st.write("<h1>How to Use YouTube Summarizer and PDF Tool</h1>", unsafe_allow_html=True)
+    st.markdown(
+        """
+        <div class="main-header" style="text-align: center;">
+            <h1 style="margin-bottom: 0; line-height: 1.2;">
+                <span style="color: #ffffff;">How to use</span>, 
+                <span style="color: #9D4FDB;"><i>Youtube Summarizer.</i></span>
+            </h1>
+            <h4 style="margin-top: 0; color: #FFFFFF;">Summarize YouTube videos in seconds!</h4>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+    
 
     st.markdown(
         """
         <div class="content">
-            YouTube Summarizer
-
+            YouTube Summarizer      
+            
+            _>
             1. Enter the YouTube URL in the input field on the home page.
             2. Click on the 'Submit' button.
             3. Wait for a few moments while the summarization is being processed.
             4. The video and its summary will be displayed below the input field.
 
+        </div>
+        """, unsafe_allow_html=True
+    )
+    st.markdown(
+        """
+        <div class="content">
             PDF Tool
 
+            ->      
             1. After generating the video summary, navigate to the 'Tools' section.
             2. Click on the 'Convert Summary to PDF' button to create a PDF file of the summary.
             3. Once the PDF is created, you will see a 'Download PDF' button.
@@ -125,9 +147,22 @@ def show():
         """
         <div class="faq-section">
             <h3>FREQUENTLY ASKED QUESTIONS</h3>
-            <p>Q: Can I summarize any video?<br>A: Yes, as long as it's public.</p>
-            <p>Q: How long does it take?<br>A: Just a few seconds to get the summary.</p>
-            <p>Q: Can I save the summary?<br>A: Yes, download it as a PDF.</p>
+        """, unsafe_allow_html=True
+    )
+    
+    # Collapsible FAQ entries
+    faqs = [
+        ("Can I summarize any video?", "Yes, as long as it's public."),
+        ("How long does it take?", "Just a few seconds to get the summary."),
+        ("Can I save the summary?", "Yes, download it as a PDF.")
+    ]
+
+    for question, answer in faqs:
+        with st.expander(question, expanded=False):  # Collapsible FAQ entry
+            st.write(answer)
+
+    st.markdown(
+        """
         </div>
         """, unsafe_allow_html=True
     )
@@ -147,3 +182,7 @@ def show():
         </div>
         """, unsafe_allow_html=True
     )
+
+# Call the show function to run the app
+if __name__ == "__main__":
+    show()

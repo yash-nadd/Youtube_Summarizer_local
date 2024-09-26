@@ -14,6 +14,11 @@ def show():
                 background-color: #000; /* Set background color to black */
                 color: white; /* Ensure text color is white for contrast */
             }
+            .main {
+                 background-color: #1e1e1e; /* Dark black shade */
+                 color: white; /* Ensure main content text color is white */
+                }
+
             .navbar {
                 display: flex;
                 justify-content: space-between;
@@ -34,6 +39,9 @@ def show():
             .navbar a:hover {
                 color: #ad8aff;
             }
+            h3, span {
+            color: white; /* Set all text to white by default */
+        }
             h1 {
                 text-align: center;
                 margin-top: 60px;
@@ -64,8 +72,17 @@ def show():
         """, unsafe_allow_html=True
     )
 
-    st.markdown("<h1><i>About YouTube Summarizer</i></h1>", unsafe_allow_html=True)
-    
+    st.markdown(
+        """
+        <div class="main-header" style="text-align: center;">
+            <h1 style="margin-bottom: 0; line-height: 1.2;">
+                <span style="color: #ffffff;">About</span>, 
+                <span style="color: #9D4FDB;"><i>Youtube Summarizer.</i></span>
+            </h1>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
     st.markdown(
         """
         <div class="content">
@@ -77,16 +94,20 @@ def show():
         """, unsafe_allow_html=True
     )
 
-    st.markdown(
-        """
-        <div class="faq-section">
-            <h3>FREQUENTLY ASKED QUESTIONS</h3>
-            <p>Q: Can I summarize any video?<br>A: Yes, as long as it's public.</p>
-            <p>Q: How long does it take?<br>A: Just a few seconds to get the summary.</p>
-            <p>Q: Can I save the summary?<br>A: Yes, download it as a PDF.</p>
-        </div>
-        """, unsafe_allow_html=True
-    )
+    # Add collapsible FAQ entries
+    st.markdown("<div class='faq-section'><h3 >FREQUENTLY ASKED QUESTIONS</h3>", unsafe_allow_html=True)
+
+    faqs = [
+        ("Can I summarize any video?", "Yes, as long as it's public."),
+        ("How long does it take?", "Just a few seconds to get the summary."),
+        ("Can I save the summary?", "Yes, download it as a PDF.")
+    ]
+
+    for question, answer in faqs:
+        with st.expander(question, expanded=False):  # Collapsible FAQ entry
+            st.write(answer)
+
+    st.markdown("</div>", unsafe_allow_html=True)  # Closing the FAQ section
 
     st.markdown(
         """
@@ -103,4 +124,3 @@ def show():
         </div>
         """, unsafe_allow_html=True
     )
-    
