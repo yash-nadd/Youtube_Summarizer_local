@@ -145,7 +145,7 @@ def show():
         video_url = st.text_input("Enter YouTube URL", value=st.session_state.video_url)
 
     with col2:
-        summary_length = st.number_input("Length", min_value=10, max_value=200, value=100, step=10)
+        summary_length = st.number_input("More words,More precise", min_value=10, max_value=10000, value=100, step=10)
 
     submit_button = st.button("Submit", key="submit_button", help="Generate Summary")
    
