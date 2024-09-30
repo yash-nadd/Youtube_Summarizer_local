@@ -1,23 +1,26 @@
 import sys
 import os
 import subprocess
+import tempfile
+import numpy as np
+import speech_recognition as sr
+from youtube_transcript_api import YouTubeTranscriptApi
+from transformers import pipeline, BartForConditionalGeneration, BartTokenizer
 
 # Add local bin directory to PATH
 os.environ["PATH"] += os.pathsep + "/home/appuser/.local/bin"
 
-# Install transformers and sentencepiece if not available
-try:
-    import transformers
-except ImportError:
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "transformers"])
+# Install necessary packages if not available
+def install(package):
+    subprocess.check_call([sys.executable, "-m", "pip", "install", package])
 
-try:
-    import sentencepiece
-except ImportError:
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "sentencepiece"])
+required_packages = ['transformers', 'sentencepiece', 'SpeechRecognition', 'youtube-transcript-api', 'yt-dlp']
 
-from transformers import pipeline, BartForConditionalGeneration, BartTokenizer
-from youtube_transcript_api import YouTubeTranscriptApi
+for package in required_packages:
+    try:
+        __import__(package)
+    except ImportError:
+        install(package)
 
 # Specify the directory to save the model
 MODEL_DIR = "models/bart-base"
@@ -29,6 +32,27 @@ def load_model():
     model = BartForConditionalGeneration.from_pretrained('facebook/bart-base', cache_dir=MODEL_DIR)
     return pipeline('summarization', model=model, tokenizer=tokenizer)
 
+def download_video(video_id):
+    """Download video using yt-dlp and extract audio."""
+    print("Downloading video...")
+    video_url = f"https://www.youtube.com/watch?v={video_id}"
+    audio_file_path = tempfile.mktemp(suffix='.wav')
+
+    # Download audio using yt-dlp
+    result = subprocess.run(['yt-dlp', '--extract-audio', '--audio-format', 'wav', '-o', audio_file_path, video_url, '--verbose'], capture_output=True)
+
+    if result.returncode != 0:
+        raise RuntimeError(f"Failed to download audio: {result.stderr.decode()}")
+
+    return audio_file_path
+
+def transcribe_audio(audio_file_path):
+    """Transcribe audio to text using SpeechRecognition."""
+    recognizer = sr.Recognizer()
+    with sr.AudioFile(audio_file_path) as source:
+        audio_data = recognizer.record(source)  # Read the entire audio file
+        return recognizer.recognize_google(audio_data)
+
 def main(desired_length):
     try:
         # Read the YouTube video ID from file
@@ -37,12 +61,23 @@ def main(desired_length):
 
         # Validate the video ID format
         video_id = youtube_video.split("=")[-1]
+        if len(video_id) != 11:
+            raise ValueError("Invalid YouTube video ID. Please provide a complete YouTube video ID.")
+
         print(f"Video ID: {video_id}")
 
-        # Fetch the transcript for the video
-        print("Fetching transcript...")
-        transcript = YouTubeTranscriptApi.get_transcript(video_id)
-        result = " ".join([t['text'] for t in transcript])
+        # Attempt to fetch the transcript for the video
+        try:
+            print("Fetching transcript...")
+            transcript = YouTubeTranscriptApi.get_transcript(video_id)
+            result = " ".join([t['text'] for t in transcript])
+        except Exception as e:
+            print("Transcript not available, attempting to download audio and transcribe...")
+            audio_file_path = download_video(video_id)
+            try:
+                result = transcribe_audio(audio_file_path)
+            finally:
+                os.remove(audio_file_path)  # Clean up the audio file after processing
 
         # Calculate and print the number of words in the transcript
         num_words_in_transcript = len(result.split())
